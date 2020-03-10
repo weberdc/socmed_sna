@@ -1,8 +1,14 @@
-# Network extraction
+# Social Media Repeatability
 
 Tools for extracting information and constructing and analysing networks from
 Twitter data (JSON). Some of these are \*nix shell scripts, some are Windows
 batch files, some are python scripts. Mostly tested on Windows running cygwin.
+
+## Purpose
+
+This code has been written to support the analysis of social media data (Twitter data, specifically) to support
+the comparison of simultaneously collected datasets in order to examine variations in data collection activities
+and how they affect not just the datasets but also the analyses based on those data.
 
 ## Code
 
@@ -59,12 +65,12 @@ scripts above in the following way (`$NET_BIN` refers to the directory in which 
  6. `python plot_per_time_metrics.py -f a --label A --window 60 --y-limits auto-auto-1000-1500 -o charts  --out-filebase A_outfile_prefix`
     will create a single figure with four plots using `a` as the basename for
     the JSON and CSV files to use and `A_outfile_prefix` as the prefix for the
-    output file. The `y-limits` option can be used to specify the y-limit of 
+    output file. The `y-limits` option can be used to specify the y-limit of
     each of the four charts to facilitate comparison between different datasets
-    (i.e., give them all the same y-range). The window size is specified in 
+    (i.e., give them all the same y-range). The window size is specified in
     minutes (i.e., 60 is one hour).
  7. `python plot_tweet_counts.py -l "RAPID,Twarc" --tweets -t "Election Day" -v rapid-k.json twarc.json -o ..\images\nswelec-rapid_twarc-tweet_counts-60m.png -w 60 --tz-fix -600`
- 7. `cat tweets.json | run_hashtag_wordcount.sh > hashtag_counts.csv` then look at which hashtags occur most often and may clutter any hashtag graph - ignore these in the next step. 
+ 7. `cat tweets.json | run_hashtag_wordcount.sh > hashtag_counts.csv` then look at which hashtags occur most often and may clutter any hashtag graph - ignore these in the next step.
  8. `python build_hashtag_co-mention_graph.py --min-width 1 -v -i tweets.json -o hashtag_co-mentions.graphml --ignore "hashtag1,hashtag2,hashtag3"` -- this will build a network and tell you how big it is. If you use the option `--dry-run` you can see the size of the graph without writing it out.
  9. `DOS: build_jsocnet_graphs.bat a graphs` will create `graphs/a-mentions.graphml`,
     `graphs/a-replies.graphml`, `graphs/a-retweets.graphml`, and
