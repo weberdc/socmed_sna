@@ -10,6 +10,12 @@ This code has been written to support the analysis of social media data (Twitter
 the comparison of simultaneously collected datasets in order to examine variations in data collection activities
 and how they affect not just the datasets but also the analyses based on those data.
 
+## Data
+
+The `data` folder holds files with the IDs of tweets collected in parallel and used in a study examining the effect of variations in data collection. The files have the structure `<activity>_<phase>-<tool>-tweet_ids.txt`, where activity refers to a particular collection activity, phase refers to which phase of a multiphase exercise the dataset refers to, and tool refers to which social media collection tool was used.
+
+The only activity in this instance refers to the Australian Broadcasting Corporation's (ABC's) Q&A
+
 ## Code
 
 ### Requirements
