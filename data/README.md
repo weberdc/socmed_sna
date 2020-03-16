@@ -15,12 +15,12 @@ The Q&A datasets were collected during the following times:
 
 The filter terms used were `qanda` (no '\#', to also get mentions of `@qanda`) and two terms which relate to the name of one of the Q&A panelists (and are withheld to comply with ethics protocol H-2018-045 approved by the University of Adelaide's human research and ethics committee).
 
-- `qanda_part1-rapid_e-tweet_ids.txt`: Part 1, RAPID-E
-- `qanda_part1-rapid-tweet_ids.txt`: Part 1, RAPID
-- `qanda_part1-twarc-tweet_ids.txt`: Part 1, Twarc
-- `qanda_part2-rapid_e-tweet_ids.txt`: Part 2, RAPID-E
-- `qanda_part2-rapid-tweet_ids.txt`: Part 2, RAPID
-- `qanda_part2-twarc-tweet_ids.txt`: Part 2, Twarc
+- `qanda_part1-rapid_e-tweet_ids.txt.gz`: Part 1, RAPID-E
+- `qanda_part1-rapid-tweet_ids.txt.gz`: Part 1, RAPID
+- `qanda_part1-twarc-tweet_ids.txt.gz`: Part 1, Twarc
+- `qanda_part2-rapid_e-tweet_ids.txt.gz`: Part 2, RAPID-E
+- `qanda_part2-rapid-tweet_ids.txt.gz`: Part 2, RAPID
+- `qanda_part2-twarc-tweet_ids.txt.gz`: Part 2, Twarc
 
 These datasets were used in the following publications:
 
@@ -30,10 +30,12 @@ These datasets were used in the following publications:
 
 This study examined polarisation and misinformation during Australia's Black Summer bushfires (2019-2020).
 
-- `ArsonEmergency-20191231-20202017-tweet_ids.txt`
-- `AustraliaFire-20191231-20200117-tweet_ids.txt`
-- `brexit-20191231-20200117-tweet_ids.txt`
+- `ArsonEmergency-20191231-20200117-tweet_ids.txt.gz`: Twitter activity including 'ArsonEmergency' 2019-12-31 to 2020-01-17
+- `AustraliaFire-20191231-20200117-tweet_ids.txt.gz`: Twitter activity including 'AustraliaFire' 2019-12-31 to 2020-01-17
+- `brexit-20191231-20200117-tweet_ids.txt.gz`: Twitter activity on `\#brexit` 2019-12-31 to 2020-01-17
 
 These datasets were used in the following publications:
 
--
+<!--
+- Weber, D., Nasim, M., Falzon, L., and Mitchell, L., 2020, '\#ArsonEmergency and Australia's "Black Summer": Polarisation and misinformation on social media", _MISDOOM_, Leiden, The Netherlands, 20-22 April. 
+-->
