@@ -1,4 +1,4 @@
-# Social Media Repeatability
+# Social Media and Social Network Analysis
 
 Tools for extracting information and constructing and analysing networks from
 Twitter data (JSON). Some of these are \*nix shell scripts, some are Windows
@@ -6,15 +6,16 @@ batch files, some are python scripts. Mostly tested on Windows running cygwin.
 
 ## Purpose
 
-This code has been written to support the analysis of social media data (Twitter data, specifically) to support
-the comparison of simultaneously collected datasets in order to examine variations in data collection activities
-and how they affect not just the datasets but also the analyses based on those data.
+This code has been written to support the analysis of social media data (Twitter
+data, specifically), including to support the comparison of simultaneously 
+collected datasets in order to examine variations in data collection activities
+and how they affect not just the datasets but also the analyses based on those 
+data.
 
 ## Data
 
-The `data` folder holds files with the IDs of tweets collected in parallel and used in a study examining the effect of variations in data collection. The files have the structure `<activity>_<phase>-<tool>-tweet_ids.txt`, where activity refers to a particular collection activity, phase refers to which phase of a multiphase exercise the dataset refers to, and tool refers to which social media collection tool was used.
-
-The only activity in this instance refers to the Australian Broadcasting Corporation's (ABC's) Q&A
+The `data` folder holds files with the IDs of tweets used in a number of studies.
+`data/README.md` provides more details.
 
 ## Code
 
@@ -57,7 +58,7 @@ The only activity in this instance refers to the Australian Broadcasting Corpora
 
 ## Usage
 
-Given a few corpora of tweets, e.g. a.json, b.json, and c.json, you can use the
+Specifically for comparing parallel datasets, given a few corpora of tweets, e.g. `a.json`, `b.json`, and `c.json`, you can use the
 scripts above in the following way (`$NET_BIN` refers to the directory in which the scripts reside):
 
  1. `python basic_tweet_corpus_stats.py --latex --labels "A,B,C" a.json b.json c.json`
