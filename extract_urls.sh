@@ -11,7 +11,7 @@
 #
 
 if test "$1" == "-h" || test "$1" == "--header" ; then
-  echo "user_id,expanded_url,created_at,tweet_type,tweet_id"
+  echo "user_id,expanded_url,created_at,tweet_type,tweet_id,tweet_lang"
 fi
 
 # I filter .url != "" because extended tweets include an internal URL to the extended tweet content
@@ -25,7 +25,8 @@ jq -cr '.|select(.entities.urls|length > 0)|
       .entities.urls
     end),
     ts: .created_at,
-    tweet_id: .id_str
-  }|{user_id:.user_id,url:.urls[].expanded_url,ts:.ts,tweet_id:.tweet_id}|
+    tweet_id: .id_str,
+    lang: .lang
+  }|{user_id:.user_id,url:.urls[].expanded_url,ts:.ts,tweet_id:.tweet_id,t_lang:.lang}|
   select(.url|length  > 0)|
-  [.user_id,.url,.ts,"URL",.tweet_id]|@csv'
+  [.user_id,.url,.ts,"URL",.tweet_id,.t_lang]|@csv'

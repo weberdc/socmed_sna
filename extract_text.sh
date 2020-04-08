@@ -16,5 +16,6 @@ jq -cr '.|
     user_screen_name: .user.screen_name,
     ts: .created_at,
     tweet_id: .id_str,
+    tweet_lang: .lang,
     text: (if .extended_tweet == null then (if .full_text == null then .text else .full_text end) else .extended_tweet.full_text end)
   }'

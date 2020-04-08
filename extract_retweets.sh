@@ -11,7 +11,7 @@
 #
 
 if test "$1" == "-h" || test "$1" == "--header" ; then
-  echo "retweeting_user_id,retweeted_user_id,retweet_created_at,tweet_type,retweet_id,original_tweet_id"
+  echo "retweeting_user_id,retweeted_user_id,retweet_created_at,tweet_type,retweet_id,original_tweet_id,tweet_lang"
 fi
 
 jq -cr '.|select(.retweeted_status != null)|
@@ -20,5 +20,6 @@ jq -cr '.|select(.retweeted_status != null)|
     retweeted_user_id: .retweeted_status.user.id_str,
     ts: .created_at,
     retweet_id: .id_str,
-    original_tweet_id: .retweeted_status.id_str
-  }|[.retweeter_user_id,.retweeted_user_id,.ts,"RETWEET",.retweet_id,.original_tweet_id]|@csv'
+    original_tweet_id: .retweeted_status.id_str,
+    lang: .lang
+  }|[.retweeter_user_id,.retweeted_user_id,.ts,"RETWEET",.retweet_id,.original_tweet_id,.lang]|@csv'

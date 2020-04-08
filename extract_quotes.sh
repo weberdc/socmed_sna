@@ -11,7 +11,7 @@
 #
 
 if test "$1" == "-h" || test "$1" == "--header" ; then
-  echo "quoting_user_id,quoted_user_id,quote_created_at,tweet_type,quote_id,original_tweet_id"
+  echo "quoting_user_id,quoted_user_id,quote_created_at,tweet_type,quote_id,original_tweet_id,tweet_lang"
 fi
 
 # we don't want to catch retweets of quotes - they should be counted as retweets, so we filter them out
@@ -21,5 +21,6 @@ jq -cr '.|select(.retweeted_status == null)|select(.quoted_status != null)|
     quoted_user_id: .quoted_status.user.id_str,
     ts: .created_at,
     quote_id: .id_str,
-    original_tweet_id: .quoted_status.id_str
-  }|[.quoter_user_id,.quoted_user_id,.ts,"QUOTE",.quote_id,.original_tweet_id]|@csv'
+    original_tweet_id: .quoted_status.id_str,
+    lang: .lang
+  }|[.quoter_user_id,.quoted_user_id,.ts,"QUOTE",.quote_id,.original_tweet_id,.lang]|@csv'

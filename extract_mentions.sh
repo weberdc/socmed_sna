@@ -11,7 +11,7 @@
 #
 
 if test "$1" == "-h" || test "$1" == "--header" ; then
-  echo "mentioning_user_id,mentioned_user_id,created_at,tweet_type,mentioning_tweet_id"
+  echo "mentioning_user_id,mentioned_user_id,created_at,tweet_type,mentioning_tweet_id,tweet_lang"
 fi
 
 jq -cr '.|select(.entities.user_mentions|length > 0)|
@@ -23,6 +23,7 @@ jq -cr '.|select(.entities.user_mentions|length > 0)|
       .entities.user_mentions
     end),
     ts: .created_at,
-    tweet_id:.id_str
-  }|{user_id:.user_id,mention:.mentions[].id_str,ts:.ts,tweet_id:.tweet_id}|
-  [.user_id,.mention,.ts,"MENTION",.tweet_id]|@csv'
+    tweet_id:.id_str,
+    lang: .lang
+  }|{user_id:.user_id,mention:.mentions[].id_str,ts:.ts,tweet_id:.tweet_id,t_lang:.lang}|
+  [.user_id,.mention,.ts,"MENTION",.tweet_id,.t_lang]|@csv'

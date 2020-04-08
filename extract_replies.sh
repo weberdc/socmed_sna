@@ -11,7 +11,7 @@
 #
 
 if test "$1" == "-h" || test "$1" == "--header" ; then
-  echo "replying_user_id,replied_to_user_id,reply_created_at,tweet_type,reply_tweet_id,original_tweet_id"
+  echo "replying_user_id,replied_to_user_id,reply_created_at,tweet_type,reply_tweet_id,original_tweet_id,tweet_lang"
 fi
 
 jq -cr '.|select(.in_reply_to_status_id_str != null)|
@@ -20,5 +20,6 @@ jq -cr '.|select(.in_reply_to_status_id_str != null)|
     replied_to_user_id: .in_reply_to_user_id_str,
     ts: .created_at,
     reply_tweet_id: .id_str,
-    original_tweet_id: .in_reply_to_status_id_str
-  }|[.replying_user_id,.replied_to_user_id,.ts,"REPLY",.reply_tweet_id,.original_tweet_id]|@csv'
+    original_tweet_id: .in_reply_to_status_id_str,
+    lang: .lang
+  }|[.replying_user_id,.replied_to_user_id,.ts,"REPLY",.reply_tweet_id,.original_tweet_id,.lang]|@csv'

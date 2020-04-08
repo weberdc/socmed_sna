@@ -11,7 +11,7 @@
 #
 
 if test "$1" == "-h" || test "$1" == "--header" ; then
-  echo "user_id,hashtag,created_at,tweet_type,tweet_id"
+  echo "user_id,hashtag,created_at,tweet_type,tweet_id,tweet_lang"
 fi
 
 jq -cr '.|select(.entities.hashtags|length > 0)|
@@ -23,6 +23,7 @@ jq -cr '.|select(.entities.hashtags|length > 0)|
       .entities.hashtags
     end),
     ts: .created_at,
-    tweet_id: .id_str
-  }|{user_id:.user_id,hashtag:.hashtags[].text,ts:.ts,tweet_id:.tweet_id}|
-  [.user_id,.hashtag,.ts,"HASHTAG",.tweet_id]|@csv'
+    tweet_id: .id_str,
+    lang: .lang
+  }|{user_id:.user_id,hashtag:.hashtags[].text,ts:.ts,tweet_id:.tweet_id,t_lang:.lang}|
+  [.user_id,.hashtag,.ts,"HASHTAG",.tweet_id,.t_lang]|@csv'
