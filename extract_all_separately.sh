@@ -12,19 +12,24 @@
 
 FN_ARG=$1
 
+CAT=cat
+if [[ "${FN_ARG: -1}" == "z" ]]; then
+    CAT=zcat
+    FN_ARG=$2
+    echo "Tweets compressed; using zcat..."
+fi
+
 # Props to https://stackoverflow.com/a/246128/390018 for this bit
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 # And to https://stackoverflow.com/a/965072/390018 for this bit
 FILEPATH="${FN_ARG%.*}"
-
-CAT=cat
-if [[ "${FN_ARG: -1}" == "z" ]]; then
-    CAT=zcat
-    echo "Tweets compressed; using zcat..."
-fi
+while [[ "$FILEPATH" =~ .*\..* ]]; do
+    FILEPATH="${FILEPATH%.*}"
+done
 
 echo "Extracting all interesting bits to similarly named CSVs from ${FN_ARG}"
+echo "Using file base: ${FILEPATH}"
 
 echo "- Extracting retweets"
 $CAT "${FN_ARG}" | $DIR/extract_retweets.sh -h > "${FILEPATH}-retweets.csv"
