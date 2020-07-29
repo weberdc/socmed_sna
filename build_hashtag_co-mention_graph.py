@@ -181,4 +181,6 @@ if __name__=='__main__':
     if not dry_run:
         nx.write_graphml(g, out_file)
 
-    print('DONE - Hashtag Graph[nodes=%d,edges=%d]' % (len(g), len(g.edges())))
+    print('DONE - Hashtag Graph[nodes=%d,edges=%d,components=%d]' % (
+        len(g), len(g.edges()), nx.number_connected_components(g)
+    ))
