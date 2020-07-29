@@ -84,6 +84,13 @@ class Options:
             help='Render bar chart, not line plot (default: False)'
         )
         self.parser.add_argument(
+            '--secs',
+            action='store_true',
+            default=False,
+            dest='secs',
+            help='Timestamps are provided in epoch seconds (default: False)'
+        )
+        self.parser.add_argument(
             '-t', '--title',
             default='Posts',
             dest='chart_title',
@@ -204,6 +211,10 @@ def tw_to_utc_sec(created_at, tz_fix_mins=0):
         return int(created_at / 1000) + (tz_fix_mins * 60)
 
 
+def epoch_seconds_2_ts(ts_sec):
+    return datetime.fromtimestamp(int(ts_sec))
+
+
 def load_json_objects(fn):
     try:
         return [json.loads(l) for l in read_lines(fn)]
@@ -226,14 +237,21 @@ def extract(o, prop_path):
     return str(curr_v)
 
 
+NOW_TS_FORMAT='%Y-%m-%d %H:%M:%S'  # 2011-04-26 08:57:23
+
+def now_str(fmt=NOW_TS_FORMAT):
+    """ A timestamp string to the current second to use as for logging. """
+    return datetime.now().strftime(fmt)
+
+
 def eprint(*args, **kwargs):
     """Print to stderr"""
-    print(*args, file=sys.stderr, **kwargs)
+    print(*args, file=sys.stderr, flush=True, **kwargs)
 
 
 DEBUG=False
 def log(msg):
-    if DEBUG: eprint(msg)
+    if DEBUG: eprint('[%s] %s' % (now_str(), msg))
 
 
 if __name__=='__main__':
@@ -258,6 +276,7 @@ if __name__=='__main__':
     fig_height = opts.fig_height
     xlabel     = opts.xlabel if opts.xlabel else 'Time window (%d minutes)' % w_mins
     bar_chart  = opts.bar_chart
+    secs       = opts.secs
 
     log('File count   : %d' % len(in_files))
     log('Out file     : %s' % out_file)
@@ -271,41 +290,45 @@ if __name__=='__main__':
     log('Figure size  : %s' % [fig_width, fig_height])
     log('X axis label : %s' % xlabel)
     log('Bar chart    : %s' % bar_chart)
+    log('Epoch secs   : %s' % secs)
 
-    timestamps = {}  # filename/label, []
+    timestamps = {}  # filename/series label : [ts_epoch_sec, ts_epoch_sec, ...]
     count = 0
     for f in in_files:
-        l = labels[count]
+        series = labels[count]
         count += 1
         if t_mode:
-            timestamps[l] = list(map(lambda t: t['created_at'], load_json_objects(f)))
+            timestamps[series] = list(map(lambda t: tw_to_utc_sec(t['created_at'], tz_fix), load_json_objects(f)))
         elif json_p:
-            timestamps[l] = list(map(lambda o: extract(o, json_p), load_json_objects(f)))
+            timestamps[series] = list(map(lambda o: tw_to_utc_sec(extract(o, json_p), tz_fix), load_json_objects(f)))
+        elif secs:
+            timestamps[series] = list(map(int, read_lines(f))) #map(format_twitter_ts, read_lines(f)))
         else:
-            timestamps[l] = read_lines(f)
-        print('%s(%s): %d entries' % (l, f, len(timestamps[l])))
+            timestamps[series] = list(map(lambda ts: tw_to_utc_sec(ts, tz_fix), read_lines(f)))
+        print('%s (%s): %d entries' % (series, f, len(timestamps[series])))
 
-    ts_str_to_utc = {}
+    # ts_str_to_utc = {}
     first_ts_str  = None
     first_ts      = 10000000000
     final_ts_str  = None
     final_ts      = 0
-    for l in timestamps:
-        timestamps[l].sort(key=lambda ts: tw_to_utc_sec(ts, tz_fix))
-        for ts_str in timestamps[l]:
-            utc_ts = tw_to_utc_sec(ts_str, tz_fix)
-            ts_str_to_utc[ts_str] = utc_ts
+    for series in timestamps:
+        timestamps[series].sort()  # key=lambda ts: tw_to_utc_sec(ts, tz_fix))
+        # for ts_str in timestamps[series]:
+        #     utc_ts = tw_to_utc_sec(ts_str, tz_fix)
+        for utc_ts in timestamps[series]:
+            # ts_str_to_utc[ts_str] = utc_ts
             if utc_ts < first_ts:
                 first_ts     = utc_ts
-                first_ts_str = ts_str
+                first_ts_str = format_twitter_ts(utc_ts)
             if utc_ts > final_ts:
                 final_ts     = utc_ts
-                final_ts_str = ts_str
+                final_ts_str = format_twitter_ts(utc_ts)
 
-    if isinstance(first_ts_str, int):
-        first_ts_str = format_twitter_ts(int(first_ts_str / 1000))
-    if isinstance(final_ts_str, int):
-        final_ts_str = format_twitter_ts(int(final_ts_str / 1000))
+    # if isinstance(first_ts_str, int):
+    #     first_ts_str = format_twitter_ts(int(first_ts_str / 1000))
+    # if isinstance(final_ts_str, int):
+    #     final_ts_str = format_twitter_ts(int(final_ts_str / 1000))
 
     log('Earliest timestamp: %s (%d)' % (first_ts_str, first_ts))
     log('Latest timestamp:   %s (%d)' % (final_ts_str, final_ts))
@@ -316,16 +339,23 @@ if __name__=='__main__':
     log('Buckets required: %d' % num_buckets)
 
     log('Calculating buckets (one . per time window)')
-    y_values = dict([(l, []) for l in timestamps])
+    y_values = dict([(s, []) for s in timestamps])
+    # TODO: process each file separately, not by window, that way
+    # each file is only processed once.
     current_ts = first_ts
     while current_ts < final_ts:
-        def in_range(ts_str):
-            ts = ts_str_to_utc[ts_str]
+        def in_range(ts): #_str):
+            # ts = ts_str_to_utc[ts_str]
             return ts >= current_ts and ts < current_ts + w_secs
 
         for l in timestamps:
             time_series = timestamps[l]
-            hit_count = len(list(filter(in_range, time_series)))
+            # hit_count = len(list(filter(in_range, time_series)))
+            hit_count = 0
+            for ts in time_series:
+                if ts < current_ts: continue # skip early entries
+                if ts > current_ts + w_secs: break # jump out once we're past it
+                hit_count += 1
             y_values[l].append(hit_count)
 
         current_ts += w_secs
@@ -340,8 +370,8 @@ if __name__=='__main__':
     if DEBUG:
         log('Num buckets: %d' % num_buckets)
         for ts in timestamps:
-            log('[%s]: %s' % (ts, ','.join(map(lambda l: str(l), y_values[ts]))))
-            log('File: %s')
+            # log('[%s]: %s' % (ts, ','.join(map(lambda l: str(l), y_values[ts]))))
+            log('File: %s' % ts)
             first_ts_dt = parse_ts(first_ts_str)
             for i in range(len(y_values[ts])):
                 log('[%5d]:\t%5d\t%s' % (i, y_values[ts][i], first_ts_dt + timedelta(minutes=w_mins*i)))
