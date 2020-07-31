@@ -307,28 +307,19 @@ if __name__=='__main__':
             timestamps[series] = list(map(lambda ts: tw_to_utc_sec(ts, tz_fix), read_lines(f)))
         print('%s (%s): %d entries' % (series, f, len(timestamps[series])))
 
-    # ts_str_to_utc = {}
     first_ts_str  = None
     first_ts      = 10000000000
     final_ts_str  = None
     final_ts      = 0
     for series in timestamps:
-        timestamps[series].sort()  # key=lambda ts: tw_to_utc_sec(ts, tz_fix))
-        # for ts_str in timestamps[series]:
-        #     utc_ts = tw_to_utc_sec(ts_str, tz_fix)
+        timestamps[series].sort()
         for utc_ts in timestamps[series]:
-            # ts_str_to_utc[ts_str] = utc_ts
             if utc_ts < first_ts:
                 first_ts     = utc_ts
                 first_ts_str = format_twitter_ts(utc_ts)
             if utc_ts > final_ts:
                 final_ts     = utc_ts
                 final_ts_str = format_twitter_ts(utc_ts)
-
-    # if isinstance(first_ts_str, int):
-    #     first_ts_str = format_twitter_ts(int(first_ts_str / 1000))
-    # if isinstance(final_ts_str, int):
-    #     final_ts_str = format_twitter_ts(int(final_ts_str / 1000))
 
     log('Earliest timestamp: %s (%d)' % (first_ts_str, first_ts))
     log('Latest timestamp:   %s (%d)' % (final_ts_str, final_ts))
@@ -344,13 +335,11 @@ if __name__=='__main__':
     # each file is only processed once.
     current_ts = first_ts
     while current_ts < final_ts:
-        def in_range(ts): #_str):
-            # ts = ts_str_to_utc[ts_str]
+        def in_range(ts):
             return ts >= current_ts and ts < current_ts + w_secs
 
         for l in timestamps:
             time_series = timestamps[l]
-            # hit_count = len(list(filter(in_range, time_series)))
             hit_count = 0
             for ts in time_series:
                 if ts < current_ts: continue # skip early entries
@@ -370,7 +359,6 @@ if __name__=='__main__':
     if DEBUG:
         log('Num buckets: %d' % num_buckets)
         for ts in timestamps:
-            # log('[%s]: %s' % (ts, ','.join(map(lambda l: str(l), y_values[ts]))))
             log('File: %s' % ts)
             first_ts_dt = parse_ts(first_ts_str)
             for i in range(len(y_values[ts])):
