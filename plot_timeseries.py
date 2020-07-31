@@ -374,7 +374,7 @@ if __name__=='__main__':
             log('File: %s' % ts)
             first_ts_dt = parse_ts(first_ts_str)
             for i in range(len(y_values[ts])):
-                log('[%5d]:\t%5d\t%s' % (i, y_values[ts][i], first_ts_dt + timedelta(minutes=w_mins*i)))
+                log('[%10d]:\t%10d\t%s' % (i, y_values[ts][i], first_ts_dt + timedelta(minutes=w_mins*i)))
 
     if accum: # accumulate the values in each list
         for l_key in y_values:
