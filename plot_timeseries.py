@@ -11,6 +11,8 @@ import json
 import gzip
 import math
 import matplotlib.pyplot as plt
+# import matplotlib.dates as mdates
+# import numpy as np
 import os
 import sys
 import time
@@ -89,6 +91,13 @@ class Options:
             default=False,
             dest='secs',
             help='Timestamps are provided in epoch seconds (default: False)'
+        )
+        self.parser.add_argument(
+            '--secs-col',
+            default=-1,
+            type=int,
+            dest='secs_col',
+            help='Timestamps are provided in epoch seconds in CSV column X (first = 1) (default: -1)'
         )
         self.parser.add_argument(
             '-t', '--title',
@@ -274,9 +283,10 @@ if __name__=='__main__':
     dry_run    = opts.dry_run
     fig_width  = opts.fig_width
     fig_height = opts.fig_height
-    xlabel     = opts.xlabel if opts.xlabel else 'Time window (%d minutes)' % w_mins
+    xlabel     = opts.xlabel if opts.xlabel != None else 'Time window (%d minutes)' % w_mins
     bar_chart  = opts.bar_chart
     secs       = opts.secs
+    secs_col   = opts.secs_col
 
     log('File count   : %d' % len(in_files))
     log('Out file     : %s' % out_file)
@@ -291,6 +301,15 @@ if __name__=='__main__':
     log('X axis label : %s' % xlabel)
     log('Bar chart    : %s' % bar_chart)
     log('Epoch secs   : %s' % secs)
+    log('Secs column  : %s' % secs_col)
+
+    def safe_parse_secs_in_col(l):
+        try:
+            return int(l.split(',')[secs_col - 1])  # column 1 == first column
+        except ValueError:  # header won't be an int
+            return None
+
+    START = datetime.now()
 
     timestamps = {}  # filename/series label : [ts_epoch_sec, ts_epoch_sec, ...]
     count = 0
@@ -303,9 +322,11 @@ if __name__=='__main__':
             timestamps[series] = list(map(lambda o: tw_to_utc_sec(extract(o, json_p), tz_fix), load_json_objects(f)))
         elif secs:
             timestamps[series] = list(map(int, read_lines(f))) #map(format_twitter_ts, read_lines(f)))
+        elif secs_col != 0:
+            timestamps[series] = list(filter(lambda x: x != None, map(safe_parse_secs_in_col, read_lines(f))))
         else:
             timestamps[series] = list(map(lambda ts: tw_to_utc_sec(ts, tz_fix), read_lines(f)))
-        print('%s (%s): %d entries' % (series, f, len(timestamps[series])))
+        log('%s (%s): %d entries' % (series, f, len(timestamps[series])))
 
     first_ts_str  = None
     first_ts      = 10000000000
@@ -334,6 +355,7 @@ if __name__=='__main__':
     # TODO: process each file separately, not by window, that way
     # each file is only processed once.
     current_ts = first_ts
+    w_count = 0
     while current_ts < final_ts:
         def in_range(ts):
             return ts >= current_ts and ts < current_ts + w_secs
@@ -348,11 +370,16 @@ if __name__=='__main__':
             y_values[l].append(hit_count)
 
         current_ts += w_secs
-        if DEBUG: eprint('.', end='')
+        if DEBUG:
+            w_count += 1
+            eprint('.', end='')
+            if w_count % 50 == 0:
+                eprint('%10d' % w_count)
     log('')
 
     x_values    = range(1, num_buckets+1)
-    x_labels    = [first_ts_str, final_ts_str]
+    # x_labels    = [np.datetime64(first_ts + w_secs * i, 's') for i in range(num_buckets)] # [np.datetime64(first_ts, 's'), np.datetime64(final_ts, 's')] #[epoch_seconds_2_ts(first_ts), epoch_seconds_2_ts(final_ts)]
+    x_labels    = [epoch_seconds_2_ts(first_ts), epoch_seconds_2_ts(final_ts)]
     colours     = cycle('bgrcmk')
     linestyles  = cycle([(), (1,2), (1,5), (1,10)])#(['-', '--', ':', '-.'])
 
@@ -381,7 +408,6 @@ if __name__=='__main__':
     ax1.set_xlabel(xlabel)
     # ax1.set_ylabel('Tweets')
     ax1.set_xlim(1, num_buckets)
-    # ax1.set_xticks(x_labels)
     # set_y_limit(ax1, y_limits, 0)
 
     if not bar_chart:
@@ -396,6 +422,15 @@ if __name__=='__main__':
             ax1.bar(new_x_values, y_values[l], width, label=l, color=next(colours), linewidth=1)
             count += 1
 
+    # TODO come back to this and get timestamps as xticks working
+    # if not xlabel.startswith('Time window'):
+    #     locator = mdates.AutoDateLocator(minticks=3, maxticks=7)
+    #     formatter = mdates.ConciseDateFormatter(locator)
+    #     ax1.xaxis.set_major_locator(locator)
+    #     ax1.xaxis.set_major_formatter(formatter)
+    #     ax1.set_xlim([x_labels[0],x_labels[-1]])
+    #     ax1.set_xticks(x_labels)
+
     ax1.legend()
 
     plt.tight_layout()
@@ -406,3 +441,5 @@ if __name__=='__main__':
 
     if not opts.batch_mode:
         plt.show()
+
+    log('DONE. Time taken %s' % (datetime.now() - START))
