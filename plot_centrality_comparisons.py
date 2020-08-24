@@ -108,6 +108,7 @@ def load_xy_data(fb, interaction, centrality, header, algo):
     filename = '%s-%s-%s.csv' % (fb, interaction, centrality)
 
     if not os.path.exists(filename):
+        log('No such file: %s' % filename)
         return results
 
     ranked_items = []
@@ -154,7 +155,7 @@ if __name__=='__main__':
     out_file = opts.out_file
     header   = opts.expect_header
     labels   = opts.labels.split(',')
-    title    = opts.title if opts.title else in_fb
+    title    = opts.title if opts.title != None else in_fb
     algo     = opts.algo
     grey     = opts.grey
 
@@ -169,37 +170,42 @@ if __name__=='__main__':
             count = len(data[key]['x_values'])
             cmaps[key] = [str(((i / count) * 0.8) + 0.1) for i in range(count)]
 
-    # fig = plt.figure(figsize=(15,7))
     fig, axes = plt.subplots(2, 4, figsize=(15,7))
-    st = fig.suptitle(title, fontsize='x-large')
 
     for row in range(2):
         for col in range(4):
             ax = fig.add_subplot(axes[row][col])
 
-            # had to put these three lines first to remove the y ticks and labels
-            # see https://stackoverflow.com/a/45824309
             key = '%s-%s' % (interactions[row], centralities[col])
             c_value = cmaps[key] if grey else 'b'
             ax.scatter(data[key]['x_values'], data[key]['y_values'], marker='o', c=c_value)  # cmaps[key])  # 'b')
 
             count = len(data[key]['x_values'])
-            chart_title = 'Top %d ranked %s by\n%s centrality' % (
-                count, interactions[row], centralities[col]
-            )
-            ax.set_title(chart_title)
-            ax.set_xlabel(labels[0])
+            tick_values = [x*100 for x in range((count // 100) + 1)][1:]
+            if len(tick_values) > 5:
+                tick_values = tick_values[0::2]
+            chart_title = '%s: %s' % (interactions[row].capitalize(), centralities[col])
+            ax.set_title(chart_title, fontsize=14)
+            ax.set_xlabel(labels[0], fontsize=16)
             y_label = labels[1] + (' score' if algo == 'NASIM' else '')
-            ax.set_ylabel(y_label)  # labels[1])
-            ax.set_xticks([])
+            ax.set_ylabel(y_label, fontsize=16)
             if count == 0:
+                ax.set_xticks([])
                 ax.set_yticks([])
+            else:
+                ax.set_yticks(tick_values)
+                # both the lines below are required to get the xticks working
+                ax.set_xticks(tick_values)
+                ax.set_xticklabels(tick_values)
+            ax.text(0.05, 0.78, 'Top\n%d' % count, fontsize=16, bbox={'facecolor':'white'}, transform=ax.transAxes)
 
     fig.tight_layout()
 
-    # shift subplots down to make room for the overall label
-    st.set_y(0.95)
-    fig.subplots_adjust(top=0.85)
+    if title:
+        # shift subplots down to make room for the overall label
+        st = fig.suptitle(title, fontsize='x-large')
+        st.set_y(0.95)
+        fig.subplots_adjust(top=0.85)
 
     plt.savefig(out_file)
 
