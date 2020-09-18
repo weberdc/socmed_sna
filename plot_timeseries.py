@@ -275,7 +275,7 @@ if __name__=='__main__':
     t_mode     = opts.tweets_mode
     json_p     = (opts.json_field.split('.') if opts.json_field else [])
     w_mins     = opts.window_mins
-    labels     = (opts.labels.split(',') if opts.labels else in_files)
+    labels     = (opts.labels.split('|') if opts.labels else in_files)
     title      = opts.chart_title
     tz_fix     = opts.tz_fix_mins
     accum      = opts.cumulative
