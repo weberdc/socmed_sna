@@ -86,6 +86,13 @@ class Options:
             help='Render bar chart, not line plot (default: False)'
         )
         self.parser.add_argument(
+            '--header',
+            action='store_true',
+            default=False,
+            dest='header',
+            help='Expect a header row in the CSV input file (default: False)'
+        )
+        self.parser.add_argument(
             '--secs',
             action='store_true',
             default=False,
@@ -169,7 +176,7 @@ class Options:
         return self.parser.parse_args(args)
 
 
-def read_lines(file):
+def read_lines(file, header=False):
     def open_file(fn):
         if fn[-1] in 'zZ':
             return gzip.open(fn, 'rb')
@@ -178,7 +185,11 @@ def read_lines(file):
 
     if file:
         with open_file(file) as f:
-            return [l.strip() for l in f.readlines()]
+            lines = [l.strip() for l in f.readlines()]
+            if header:
+                return lines[1:]
+            else:
+                return lines
     else:
         log("WARNING: can't read %s" % file)
         return []
@@ -287,6 +298,7 @@ if __name__=='__main__':
     bar_chart  = opts.bar_chart
     secs       = opts.secs
     secs_col   = opts.secs_col
+    header     = opts.header
 
     log('File count   : %d' % len(in_files))
     log('Out file     : %s' % out_file)
@@ -302,6 +314,7 @@ if __name__=='__main__':
     log('Bar chart    : %s' % bar_chart)
     log('Epoch secs   : %s' % secs)
     log('Secs column  : %s' % secs_col)
+    log('Header       : %s' % header)
 
     def safe_parse_secs_in_col(l):
         try:
@@ -320,12 +333,12 @@ if __name__=='__main__':
             timestamps[series] = list(map(lambda t: tw_to_utc_sec(t['created_at'], tz_fix), load_json_objects(f)))
         elif json_p:
             timestamps[series] = list(map(lambda o: tw_to_utc_sec(extract(o, json_p), tz_fix), load_json_objects(f)))
-        elif secs:
-            timestamps[series] = list(map(int, read_lines(f))) #map(format_twitter_ts, read_lines(f)))
-        elif secs_col != 0:
-            timestamps[series] = list(filter(lambda x: x != None, map(safe_parse_secs_in_col, read_lines(f))))
+        elif secs and secs_col not in [-1, 0]:
+            timestamps[series] = list(map(int, read_lines(f, header))) #map(format_twitter_ts, read_lines(f)))
+        elif secs_col not in [-1, 0]:
+            timestamps[series] = list(filter(lambda x: x != None, map(safe_parse_secs_in_col, read_lines(f, header))))
         else:
-            timestamps[series] = list(map(lambda ts: tw_to_utc_sec(ts, tz_fix), read_lines(f)))
+            timestamps[series] = list(map(lambda ts: tw_to_utc_sec(ts, tz_fix), read_lines(f, header)))
         log('%s (%s): %d entries' % (series, f, len(timestamps[series])))
 
     first_ts_str  = None
