@@ -6,6 +6,7 @@ from argparse import ArgumentParser
 from copy import deepcopy
 
 
+import gzip
 import json
 import ntpath  # https://stackoverflow.com/a/8384788
 import os
@@ -60,13 +61,28 @@ def extract_filename(filepath, default_name='UNKNOWN.txt'):
     return os.path.splitext(filename)[0]
 
 
-def read_lines(file=None):
+def read_tweets(file=None):
     """Gets the lines from the given file or stdin if it's None or '' or '-'."""
     if file and file != '-':
-        with open(file, 'r', encoding='utf-8') as f:
-            return [l.strip() for l in f.readlines()]
+        lines = []
+        count = 0
+        try:
+            f = gzip.open(file, 'rt') if file[-1] in 'Zz' else open(file, 'r', encoding='utf-8')
+            for l in f:
+                lines.append(json.loads(l.strip()))
+                count += 1
+                if count % 1000 == 0:
+                    eprint('.', flush=True, end='')
+                if count % 50000 == 0:
+                    eprint('%10d' % count, flush=True)
+        finally:
+            f.close()
+        eprint('\n%d' % count)
+        return lines
+        # with open(file, 'r', encoding='utf-8') as f:
+        #     return [l.strip() for l in f.readlines()]
     else:
-        return [l.strip() for l in sys.stdin]
+        return [json.loads(l.strip()) for l in sys.stdin]
 
 
 def lowered_hashtags_from(tweet):
@@ -100,14 +116,22 @@ def flatten(list_of_lists):
 
 
 def safe_random_mode(values):
-    if not len(values): return None
-    counts = [(v,values.count(v)) for v in set(values)]
+    return get_most_used(values, 1)
+    # if not len(values): return None
+    # counts = [(v,values.count(v)) for v in set(values)]
+    # counts.sort(key=lambda t: t[1], reverse=True)
+    # return counts[0][0]
+
+
+def get_most_used(values, rank=1):
+    if len(set(values)) < rank: return None
+    counts = [(v, values.count(v)) for v in set(values)]
     counts.sort(key=lambda t: t[1], reverse=True)
-    return counts[0][0]
+    return counts[rank-1][0]
 
 
 def analyse(tf):
-    tweets = [json.loads(l) for l in read_lines(tf)]
+    tweets = read_tweets(tf) #[json.loads(l) for l in read_lines(tf)]
 
     def select(f):
         return list(filter(f, tweets))
@@ -115,14 +139,14 @@ def analyse(tf):
     res = {}
 
     res['tweet_count'] = len(tweets)
+    all_authors = [t['user']['id_str'] for t in tweets]
+    res['author_count'] = len(set(all_authors))
     res['retweet_count'] = len(select(lambda t: 'retweeted_status' in t))
     res['quote_count'] = len(select(lambda t: 'quoted_status' in t and t['quoted_status'] and ('retweeted_status' not in t or not t['retweeted_status'])))
     res['reply_count'] = len(select(lambda t: 'in_reply_to_status_id_str' in t and t['in_reply_to_status_id_str']))
     res['tweets_with_hashtags'] = len(select(lambda t: len(t['entities']['hashtags'])))
     res['tweets_with_urls'] = len(select(lambda t: len(t['entities']['urls'])))
 
-    all_authors = [t['user']['id_str'] for t in tweets]
-    res['author_count'] = len(set(all_authors))
     res['most_prolific_author'] = safe_random_mode(all_authors)
     res['most_prolific_author_tweet_count'] = all_authors.count(res['most_prolific_author'])
 
@@ -141,13 +165,15 @@ def analyse(tf):
     res['most_mentioned_author_count'] = all_mentions.count(res['most_mentioned_author'])
 
     all_hashtags = flatten([lowered_hashtags_from(t) for t in tweets])
-    res['hashtags_uses'] = len(all_hashtags)
+    res['hashtag_uses'] = len(all_hashtags)
     res['unique_hashtags'] = len(set(all_hashtags))
     res['most_used_hashtag'] = safe_random_mode(all_hashtags)
     res['most_used_hashtag_count'] = all_hashtags.count(res['most_used_hashtag'])
+    res['next_most_used_hashtag'] = get_most_used(all_hashtags, 2)
+    res['next_most_used_hashtag_count'] = all_hashtags.count(res['next_most_used_hashtag'])
 
     all_urls = flatten([expanded_urls_from(t) for t in tweets])
-    res['urls_uses'] = len(all_urls)
+    res['url_uses'] = len(all_urls)
     res['unique_urls'] = len(set(all_urls))
     res['most_used_url'] = safe_random_mode(all_urls)
     res['most_used_url_count'] = all_urls.count(res['most_used_url'])
@@ -155,6 +181,37 @@ def analyse(tf):
     # res['filename'] = extract_filename(tf)
 
     return res
+
+
+def to_label(key):
+    return {
+        'tweet_count':          'Tweets',
+        'retweet_count':        'Retweets',
+        'quote_count':          'Quotes',
+        'reply_count':          'Replies',
+        'tweets_with_hashtags': 'Tweets with hashtags',
+        'tweets_with_urls':     'Tweets with URLs',
+        'author_count':         'Accounts',
+        'most_prolific_author': 'Most prolific account',
+        'most_prolific_author_tweet_count': 'Tweets by most prolific account',
+        'most_retweeted_tweet': 'Most retweeted tweet',
+        'most_retweeted_tweet_count': 'Most retweeted tweet count',
+        'most_replied_to_tweet': 'Most replied to tweet',
+        'most_replied_to_tweet_count': 'Most replied to tweet count',
+        'tweets_with_mentions': 'Tweets with mentions',
+        'most_mentioned_author': 'Most mentioned account',
+        'most_mentioned_author_count': 'Mentions of most mentioned account',
+        'hashtag_uses':          'Hashtag uses',
+        'unique_hashtags':       'Unique hashtags',
+        'most_used_hashtag':     'Most used hashtag',
+        'most_used_hashtag_count': 'Most used hashtag count',
+        'next_most_used_hashtag': 'Next most used hashtag',
+        'next_most_used_hashtag_count': 'Uses of next most used hashtag',
+        'url_uses':              'URL uses',
+        'unique_urls':           'Unique URLs',
+        'most_used_url':         'Most used URL',
+        'most_used_url_count':   'Uses of most used URL'
+    }[key]
 
 
 def print_header(latex, labels):
@@ -170,10 +227,13 @@ def print_header(latex, labels):
     else:
         print(','.join(['Property'] + labels))
 
+
 def print_body(latex, results):
     def clean(s):
+        # return to_label(s)
         return s if '_' not in str(s) else s.replace('_', '\\_')
     keys = list(results[0][1].keys())  # keep key order consistent
+    column_widths = calc_column_widths(results)
     if latex:
         for k in keys:
             # k_str = k if '_' not in k else k.replace('_', '\\_')
@@ -181,7 +241,7 @@ def print_body(latex, results):
                 first = i == 0
                 last  = i == len(results) - 1
                 res = results[i][1]
-                if first: print('    %s & ' % clean(k), end='') # print header?
+                if first: print('    %s & ' % to_label(k), end='') # print header?
                 if k.endswith('_url'):
                     print('\\url{%s}' % clean(res[k]), end='')         # print value
                 else:
@@ -194,7 +254,7 @@ def print_body(latex, results):
                 first = i == 0
                 last  = i == len(results) - 1
                 res = results[i][1]
-                if first: print('%s,' % k, end='')  # print header?
+                if first: print('%s,' % to_label(k), end='')  # print header?
                 print('%s' % res[k], end='')        # print value
                 if not last: print(',', end='')     # not last? print comma
                 else: print('')                     # last? print newline
@@ -240,7 +300,12 @@ if __name__=='__main__':
     labels  = opts.labels.split(',') if opts.labels else [extract_filename(tf) for tf in opts.i_files]
     if opts.latex:
         clean_labels(labels)
-    results = [(extract_filename(tf), analyse(tf)) for tf in opts.i_files]
+    results = [] # [(extract_filename(tf), analyse(tf)) for tf in opts.i_files]
+    for tf in opts.i_files:
+        log('Inspecting %s' % tf)
+        fn = extract_filename(tf)
+        analysis = analyse(tf)
+        results.append( (fn, analysis) )
 
 
     print_header(opts.latex, labels)
