@@ -67,7 +67,7 @@ def read_tweets(file=None):
         lines = []
         count = 0
         try:
-            f = gzip.open(file, 'rt') if file[-1] in 'Zz' else open(file, 'r', encoding='utf-8')
+            f = gzip.open(file, 'rt', encoding='utf-8') if file[-1] in 'Zz' else open(file, 'r', encoding='utf-8')
             for l in f:
                 lines.append(json.loads(l.strip()))
                 count += 1
@@ -220,7 +220,8 @@ def print_header(latex, labels):
         column_titles = ' & '.join(['Property'] + labels)
         print("""\\begin{table}[ht]
 \\centering
-\\begin{tabular}{%s}
+\\resizebox{\\textwidth}{!}{%
+\\begin{tabular}{@{}%s@{}}
     \\toprule
     %s \\\\
     \\midrule""" % (columns_format_str, column_titles))
@@ -233,7 +234,6 @@ def print_body(latex, results):
         # return to_label(s)
         return s if '_' not in str(s) else s.replace('_', '\\_')
     keys = list(results[0][1].keys())  # keep key order consistent
-    column_widths = calc_column_widths(results)
     if latex:
         for k in keys:
             # k_str = k if '_' not in k else k.replace('_', '\\_')
@@ -262,10 +262,11 @@ def print_body(latex, results):
 
 def print_footer(latex):
     if latex:
-        print("""    \\bottomrule
-\\end{tabular}
-\\caption{A Table}
-\\label{tab:a_table}
+        print("""    } % end resizebox/textwidth
+    \\bottomrule
+    \\end{tabular}
+    \\caption{A Table}
+    \\label{tab:a_table}
 \\end{table}
 """)
 
