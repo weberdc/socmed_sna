@@ -4,7 +4,7 @@
 # Invokes all the extract_*.sh scripts on the file of tweets provided
 # as a command line argument.
 #
-# Usage: ./exract_all_separately.sh file_of_tweets.json
+# Usage: ./exract_all_separately.sh [-z] file_of_tweets.json
 #
 # Author: Derek Weber
 # Date: 2018-12-04
