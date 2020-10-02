@@ -196,14 +196,15 @@ if __name__=='__main__':
     topx_common_ids = set(cs1_topx).intersection(cs2_topx)
 
     in_topx_common_ids = lambda id: id in topx_common_ids
-    cs1_topx = list(filter(in_topx_common_ids, cs1_topx))
-    cs2_topx = list(filter(in_topx_common_ids, cs2_topx))
+    cs1_topx = list(map(str, filter(in_topx_common_ids, cs1_topx)))
+    cs2_topx = list(map(str, filter(in_topx_common_ids, cs2_topx)))
 
     if DEBUG: log_top_x(cs1_topx, cs2_topx)
 
     try:
         tau, tau_p_value = stats.kendalltau(cs1_topx, cs2_topx, nan_policy='omit')
-    except OverflowError:
+    except OverflowError as e:
+        eprint('Overflow error: %s' % e)
         tau, tau_p_value = (0, 0)
     rho, rho_p_value = stats.spearmanr(cs1_topx, cs2_topx)
 
