@@ -13,7 +13,7 @@ The Q&A datasets were collected during the following times:
 - Part 1: UTC 2018-11-08 09:00 to 13:00
 - Part 2: UTC 2018-11-08 19:00 to 2018-11-09 10:00
 
-The filter terms used were `qanda` (no '\#', to also get mentions of `@qanda`) and two terms which relate to the name of one of the Q&A panelists (and are withheld to comply with ethics protocol H-2018-045 approved by the University of Adelaide's human research and ethics committee).
+The filter terms used were `qanda` (no '\#', to also get mentions of `@qanda`) and two terms which relate to the name of one of the Q&A panelists (and are withheld to comply with ethics protocol H-2018-045 approved by the University of Adelaide's human research and ethics committee, but can be provided on request).
 
 - `qanda_part1-rapid_e-tweet_ids.txt.gz`: Part 1, RAPID-E
 - `qanda_part1-rapid-tweet_ids.txt.gz`: Part 1, RAPID
@@ -24,7 +24,7 @@ The filter terms used were `qanda` (no '\#', to also get mentions of `@qanda`) a
 
 These datasets were used in the following publications:
 
-- 
+- Weber, D., Nasim, M., Mitchell, L., and Falzon, L., "A method to evaluate the reliability of social media data for social network analysis.", In _The 2020 IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining_, _ASONAM_, Leiden, The Netherlands, 7-10 December, 2020, accepted. (arXiv: https://arxiv.org/abs/2010.08717)
 
 **ArsonEmergency**
 
@@ -36,6 +36,4 @@ This study examined polarisation and misinformation during Australia's Black Sum
 
 These datasets were used in the following publications:
 
-<!--
-- Weber, D., Nasim, M., Falzon, L., and Mitchell, L., 2020, '\#ArsonEmergency and Australia's "Black Summer": Polarisation and misinformation on social media", _MISDOOM_, Leiden, The Netherlands, 20-22 April. 
--->
+- Weber, D., Nasim, M., Falzon, L., and Mitchell, L., "\#ArsonEmergency and Australia's "Black Summer": Polarisation and misinformation on social media.", In _Disinformation in Open Online Media_, _MISDOOM_, Leiden, The Netherlands, 26-27 October, 2020, pp. 159-173. URL: https://doi.org/10.1007/978-3-030-61841-4_11 (arXiv: https://arxiv.org/abs/2004.00742)

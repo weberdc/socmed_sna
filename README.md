@@ -7,9 +7,9 @@ batch files, some are python scripts. Mostly tested on Windows running cygwin.
 ## Purpose
 
 This code has been written to support the analysis of social media data (Twitter
-data, specifically), including to support the comparison of simultaneously 
+data, specifically), including to support the comparison of simultaneously
 collected datasets in order to examine variations in data collection activities
-and how they affect not just the datasets but also the analyses based on those 
+and how they affect not just the datasets but also the analyses based on those
 data.
 
 ## Data
@@ -31,10 +31,8 @@ The `data` folder holds files with the IDs of tweets used in a number of studies
    - python 3.7.2
    - scipy 1.2.1
    - scikit-learn 0.21.2
-   - via pip 19.0.3:
-
-     - python-louvain 0.13
-     - twarc 1.6.3
+   - python-louvain 0.13
+   - twarc 1.6.3
 
 ### Scripts
 
@@ -103,3 +101,11 @@ scripts above in the following way (`$NET_BIN` refers to the directory in which 
     - `(jsocnet) C:\Users\derek\Documents\PhD\local_analysis\jsocnet\nswelec>python %NET_BIN%\plot_centrality_comparisons.py -f comparisons\twarc_tweepy -l "Twarc,Tweepy" -t "Twarc vs Tweepy centralities compared" --header -o charts\twarc_tweepy-centrality_compared-scatterplots-nasim.png -a NASIM`
     - `(jsocnet) C:\Users\derek\Documents\PhD\local_analysis\jsocnet\nswelec>python %NET_BIN%\plot_centrality_comparisons.py -f comparisons\twarc_tweepy -l "Twarc,Tweepy" -t "Twarc vs Tweepy centralities compared" --header -o charts\twarc_tweepy-centrality_compared-scatterplots-nasim-grey.png -a NASIM -g`
     - `(jsocnet) C:\Users\derek\Documents\PhD\local_analysis\jsocnet\nswelec>python %NET_BIN%\plot_centrality_comparisons.py -f comparisons\twarc_tweepy -l "Twarc,Tweepy" -t "Twarc vs Tweepy centralities compared" --header -o charts\twarc_tweepy-centrality_compared-scatterplots-grey.png -g`
+
+
+## Publications
+
+This code has been used in the following publications and relevant datasets can be found in the `data` folder:
+
+- Weber, D., Nasim, M., Falzon, L., and Mitchell, L., "\#ArsonEmergency and Australia's "Black Summer": Polarisation and misinformation on social media.", In _Disinformation in Open Online Media_, _MISDOOM_, Leiden, The Netherlands, 26-27 October, 2020, pp. 159-173. URL: https://doi.org/10.1007/978-3-030-61841-4_11 (arXiv: https://arxiv.org/abs/2004.00742)
+- Weber, D., Nasim, M., Mitchell, L., and Falzon, L., "A method to evaluate the reliability of social media data for social network analysis.", In _The 2020 IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining_, _ASONAM_, Leiden, The Netherlands, 7-10 December, 2020, accepted. (arXiv: https://arxiv.org/abs/2010.08717)
