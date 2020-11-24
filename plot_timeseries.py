@@ -118,7 +118,7 @@ class Options:
             default=None,
             dest='labels',
             required=False,
-            help='Labels for the time series (label count needs to match file count) (default: filenames).'
+            help='Labels for the time series, separated by "|" (label count needs to match file count) (default: filenames).'
         )
         self.parser.add_argument(
             '-x', '--x-axis-label',
@@ -141,19 +141,25 @@ class Options:
             type=int,
             help='Size of time window to use, in minutes (default: 15)'
         )
+        # self.parser.add_argument(
+        #     '--fig-width',
+        #     default=5,
+        #     dest='fig_width',
+        #     type=int,
+        #     help='Width of figure (default: 5)'
+        # )
+        # self.parser.add_argument(
+        #     '--fig-height',
+        #     default=3,
+        #     dest='fig_height',
+        #     type=int,
+        #     help='Height of figure (default: 3)'
+        # )
         self.parser.add_argument(
-            '--fig-width',
-            default=5,
-            dest='fig_width',
-            type=int,
-            help='Width of figure (default: 5)'
-        )
-        self.parser.add_argument(
-            '--fig-height',
-            default=3,
-            dest='fig_height',
-            type=int,
-            help='Height of figure (default: 3)'
+            '--wh',
+            default='5,3',
+            dest='figsize',
+            help='Width,height of figure (default: "5,3")'
         )
         self.parser.add_argument(
             '--tz-fix',
@@ -292,8 +298,9 @@ if __name__=='__main__':
     accum      = opts.cumulative
     log_scale  = opts.log_scale
     dry_run    = opts.dry_run
-    fig_width  = opts.fig_width
-    fig_height = opts.fig_height
+    # fig_width  = opts.fig_width
+    # fig_height = opts.fig_height
+    figsize    = list(map(int, opts.figsize.split(',')))[:2]
     xlabel     = opts.xlabel if opts.xlabel != None else 'Time window (%d minutes)' % w_mins
     bar_chart  = opts.bar_chart
     secs       = opts.secs
@@ -309,7 +316,7 @@ if __name__=='__main__':
     log('Cumulative   : %s' % accum)
     log('Log scale    : %s' % log_scale)
     log('Dry run      : %s' % dry_run)
-    log('Figure size  : %s' % [fig_width, fig_height])
+    log('Figure size  : %s' % figsize) #[fig_width, fig_height])
     log('X axis label : %s' % xlabel)
     log('Bar chart    : %s' % bar_chart)
     log('Epoch secs   : %s' % secs)
@@ -410,7 +417,7 @@ if __name__=='__main__':
             for i in range(1, len(l)):
                 l[i] += l[i - 1]
 
-    fig = plt.figure(figsize=(fig_width, fig_height))
+    fig = plt.figure(figsize=figsize) #(fig_width, fig_height))
 
     if log_scale:
         plt.yscale('log')
