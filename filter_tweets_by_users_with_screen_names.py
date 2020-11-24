@@ -93,7 +93,7 @@ if __name__=='__main__':
     DEBUG=opts.verbose
 
     ids_of_interest = fetch_lines(opts.ids_file) if opts.ids_file else opts.i_files
-    ids_of_interest = list(map(lambda s: s.lower(), ids_of_interest))
+    ids_of_interest = list(map(lambda s: s.split('#')[0].strip().lower(), ids_of_interest))
     tweets_file     = opts.tweets_file
     invert          = opts.inverse
 
