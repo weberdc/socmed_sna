@@ -19,8 +19,11 @@ jq -cr '.|select(.entities.hashtags|length > 0)|
     user_id: .user.id_str,
     hashtags: (if .extended_tweet != null then
       .extended_tweet.entities.hashtags
-    else
-      .entities.hashtags
+    else (if .retweeted_status != null then
+        .retweeted_status.entities.hashtags
+      else
+        .entities.hashtags
+      end)
     end),
     ts: .created_at,
     tweet_id: .id_str,
