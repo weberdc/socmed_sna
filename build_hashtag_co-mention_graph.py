@@ -122,7 +122,7 @@ if __name__=='__main__':
     cooccurring_hashtags = {}  # (ht1, ht2) : count, ht1 < ht2
     tweet_count = 0
     with open(in_file, 'r', encoding='utf-8') as f:
-        for line in f.readlines():
+        for line in f:  # .readlines():
             tweet_count += 1
             if DEBUG and tweet_count %  100 == 0: eprint('.', end='')
             if DEBUG and tweet_count % 5000 == 0: eprint(' %10d' % tweet_count)
