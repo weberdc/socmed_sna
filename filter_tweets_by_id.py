@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import print_function
 
+import gzip
 import json
 import sys
 import time
@@ -61,7 +62,7 @@ def parse_ts(ts_str, fmt=TWITTER_TS_FORMAT):
 def fetch_lines(file=None):
     """Gets the lines from the given file or stdin if it's None or '' or '-'."""
     if file and file != '-':
-        with open(file, 'r', encoding='utf-8') as f:
+        with gzip.open(fn, 'rt') if file[-1] in 'zZ' else open(file, 'r', encoding='utf-8') as f:
             return [l.strip() for l in f.readlines()]
     else:
         return [l.strip() for l in sys.stdin]
