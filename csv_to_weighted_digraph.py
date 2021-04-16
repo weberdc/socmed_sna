@@ -18,7 +18,10 @@ class Options:
 
     def _init_parser(self):
 
-        self.parser = ArgumentParser(usage=self.usage,conflict_handler='resolve')
+        self.parser = ArgumentParser(
+            #usage=self.usage,
+            conflict_handler='resolve'
+        )
         self.parser.add_argument(
             '-v', '--verbose',
             action='store_true',
