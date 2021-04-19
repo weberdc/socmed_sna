@@ -48,3 +48,5 @@ This study examined polarisation and misinformation during Australia's Black Sum
 These datasets were used in the following publications:
 
 - Weber, D., Nasim, M., Falzon, L., and Mitchell, L., "\#ArsonEmergency and Australia's "Black Summer": Polarisation and misinformation on social media.", In _Disinformation in Open Online Media_, _MISDOOM_, Leiden, The Netherlands, 26-27 October, 2020, pp. 159-173. URL: https://doi.org/10.1007/978-3-030-61841-4_11 ([arXiv:2004.00742](https://arxiv.org/abs/2004.00742))
+
+- Weber, D. and Neumann, F. 2021, "A General Method to Find Highly Coordinating Communities in Social Media through Inferred Interaction Links", _Journal of Social Network Analysis and Mining_, submitted. ([arXiv:2103.03409](https://arxiv.org/abs/2103.03409))
