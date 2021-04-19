@@ -111,4 +111,4 @@ This code has been used in the following publications and relevant datasets can 
 
 - Weber, D., Nasim, M., Mitchell, L., and Falzon, L., "A method to evaluate the reliability of social media data for social network analysis.", In _The 2020 IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining_, _ASONAM_, Leiden, The Netherlands, 7-10 December, 2020, accepted. (arXiv: https://arxiv.org/abs/2010.08717)
 
-- - Weber, D. and Neumann, F. 2021, "Exploring the effect of streamed social media data variations on social network analysis", _Journal of Social Network Analysis and Mining_, submitted. ([arXiv:2103.03424](https://arxiv.org/abs/2103.03424))
+- Weber, D. and Neumann, F. 2021, "Exploring the effect of streamed social media data variations on social network analysis", _Journal of Social Network Analysis and Mining_, submitted. ([arXiv:2103.03424](https://arxiv.org/abs/2103.03424))
