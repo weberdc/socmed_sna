@@ -26,15 +26,16 @@ These datasets were used in the following publications:
 
 - Weber, D., Nasim, M., Mitchell, L., and Falzon, L., "A method to evaluate the reliability of social media data for social network analysis.", In _The 2020 IEEE/ACM International Conference on Advances in Social Networks Analysis and Mining_, _ASONAM_, Leiden, The Netherlands, 7-10 December, 2020, accepted. ([arXiv:2010.08717](https://arxiv.org/abs/2010.08717))
 
-- Weber, D., Nasim, M., Mitchell, L. and Falzon, L. 2021, "Exploring the effect of streamed social media data variations on social network analysis", _Journal of Social Network Analysis and Mining_, submitted. ([arXiv:2103.03424](https://arxiv.org/abs/2103.03424))
-
-**Other datasets**
-
-Other datasets included here are:
+Other datasets included were analysed as part of the expansion to the above ASONAM paper:
 
 - `afl-tweet_ids.zip`: AFL tweet IDs collected by RAPID and Twarc using the term `afl` over the period 2019-03-22 to 2019-03-25.
 - `afl2-tweet_ids.zip`: AFL tweet IDs for two parallel datasets collected by RAPID  using the term `afl` over the period 2019-04-03 to 2019-03-09.
 - `electionday-tweet_ids.zip`: Tweet IDs collected by Twarc, RAPID and Tweepy, collected for 24 on the 23 of March, 2019.
+
+The expanded papers details are:
+
+- Weber, D., Nasim, M., Mitchell, L. and Falzon, L. 2021, "Exploring the effect of streamed social media data variations on social network analysis", _Journal of Social Network Analysis and Mining_, 11(1), 62. https://doi.org/10.1007/s13278-021-00770-y ([arXiv:2103.03424](https://arxiv.org/abs/2103.03424))
+
 
 
 **ArsonEmergency**
@@ -49,4 +50,4 @@ These datasets were used in the following publications:
 
 - Weber, D., Nasim, M., Falzon, L., and Mitchell, L., "\#ArsonEmergency and Australia's "Black Summer": Polarisation and misinformation on social media.", In _Disinformation in Open Online Media_, _MISDOOM_, Leiden, The Netherlands, 26-27 October, 2020, pp. 159-173. URL: https://doi.org/10.1007/978-3-030-61841-4_11 ([arXiv:2004.00742](https://arxiv.org/abs/2004.00742))
 
-- Weber, D. and Neumann, F. 2021, "A General Method to Find Highly Coordinating Communities in Social Media through Inferred Interaction Links", _Journal of Social Network Analysis and Mining_, submitted. ([arXiv:2103.03409](https://arxiv.org/abs/2103.03409))
+- Weber, D., Neumann, F. 2021, "Amplifying influence through coordinated behaviour in social networks", _Journal of Social Network Analysis and Mining_, 11(1), 111. https://doi.org/10.1007/s13278-021-00815-2 ([arXiv:2103.03409](https://arxiv.org/abs/2103.03409))
